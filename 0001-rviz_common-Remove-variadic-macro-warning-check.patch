@@ -1,0 +1,39 @@
+From 62f35f903831e950d7554a35d31c21d361f7887f Mon Sep 17 00:00:00 2001
+From: Rich Mattes <richmattes@gmail.com>
+Date: Mon, 17 Aug 2020 11:58:31 -0400
+Subject: [PATCH] rviz_common: Remove variadic macro warning check
+
+Remove the check to conditionally disable the
+`-Wgnu-variadic-macro-arguments` compiler diagnostic.  As discussed in
+issue 402, the `CheckCXXCompilerFlag` CMake check will always pass for a
+`-Wno-` compiler flag due to the way gcc suppresses unrecognized command
+diagnostics for flags that disable warning messages.
+
+The comments around the check indicate that the flag should be removed
+when possible, so this commit removes it.
+
+Signed-off-by: Rich Mattes <richmattes@gmail.com>
+---
+ CMakeLists.txt | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5ed9fac7..2c3c8c12 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,12 +24,6 @@ endif()
+ 
+ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+   add_compile_options(-Wall -Wextra -Wpedantic)
+-  # TODO(wjwwood): try to remove this -- currently needed to pass on CI
+-  include(CheckCXXCompilerFlag)
+-  check_cxx_compiler_flag(-Wno-gnu-zero-variadic-macro-arguments HAS_W_FLAG)
+-  if(HAS_W_FLAG)
+-    add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
+-  endif()
+ endif()
+ 
+ find_package(ament_cmake REQUIRED)
+-- 
+2.26.2
+
